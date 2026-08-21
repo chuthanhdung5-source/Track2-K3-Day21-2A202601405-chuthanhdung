@@ -146,12 +146,18 @@ jobs:
           FALLBACK_KEY: "LS0tLS1CRUdJTiBPUEVOU1NIIFBSSVZBVEUgS0VZLS0tLS0KYjNCbGJuTnphQzFyWlhrdGRqRUFBQUFBQkc1dmJtVUFBQUFFYm05dVpRQUFBQUFBQUFBQkFBQUJGd0FBQUFkemMyZ3RjbgpOaEFBQUFBd0VBQVFBQUFRRUF0SFJrTmJlQVJQWlRxMTkvZ0JEOGVrb1hVYWtXdGtLZ1RpMVB2Y1QzUkpiemZiQWdDNXF3CmJrN0d4M2c0WmFTY2M1YnZKWW16VTdmYUd5TzdhaEVOU3Frbk52T2xLeWlyNUFGT1lPeXJtcGFFNjgvcDlHbFFDVlMzSnoKRSt3Z1ViaS9ONnB5YjJkeUtsd0NCbGF6MkMvNGZyVWY2QldOb0ZENWdlbnV6SmR6UEczVW5XM1YrUVc2aktlN0c1cnNLLwpNUzNFSHJVdWgzZ0tYUHVqRjUwWVVBR25KN2RhUk9vU0FLY3ZKWjhhNlFPN2hyWWNvNEFyNCt5djJhYVhZTnNiZU14Q2N1CmpwSFROeEVvdDNDWU1JcTBlLzFPdE4wbDJ6V1l0R0lESVlvMnZBYU1veG9VSGc2THFjY1lhT0pmOUYrSlBkM3JRdmQ4dXMKV3VsRDRjMDlmUUFBQTlBbkxTZjE0QmUzM3RxVjZrb0d5VGtRNWhBZFdSUlBldkp4OGNpUXdIdjBldml2Tkd6TDdSUFRvK056Z0d2L3d1UDBLUG4zU0Z5dkU0aUNEU1F0cm1lTnp6Y0dMWEs0NGJ0VGh0N3FhNVdEZndmYjR6TkJvbzFWdXRrOGw0dW90UjhUWTNlaXFWQ0d6OHpybTlWVWpWdmhYTGdVaFptL3hOdnoxQjVraHRtVDF0N0N4cDl1SmV0djlqdTd2dGpzSlVtdnE0RER3a25ySG1xSmx3UHpNQW1RUGYyTzlUUVpUamNBS2xNRTlrcjZ3cFV3RzY1R0YyMjV1bWh2NGM1K3B0NWJ4Y0hGSmNpa0ptRk5ndFkyS2dtb2pEdXZPNDdza0Eyc3V3Z0RkdUtZUGh0OWpNaWdtUWpnTFVrdDF0ckg5Yk5aQ1lRUXprTVJ6SGJTT1gvcXgwc3lGUGVSRStJMWVOSGlNREhNNEZtcFR5UWthOHBrTEpYTVpBRFpvdStxT2d6eU1rMExndnFocEpiU083TE1nK3F4VzFtWnZidUZRZXJqSndidmhZSGcyeExyUjMzN2x0L2hNZE9aZExUclYxTU93Qk1ndXZtYmZad2dBQUFJRUFzdzRDTHpPckN5OTN6d3d4SGpaS3dIdjZ1N2t3TUgyUkx0U3N1dFpudk9OOW9aRnhmTGd6dnZlTE8vaEp4UGkxbldzTDlhMm1XanYvZXBvV0RDT1lna3F6eWdKNG01bm1lOTF2NGVub1Z4NmFFRndWTEg0N2tqdDRXNDZ6ZlJldmdsYUhIdmVqYmhpT2UxaFRiN3FnMEFtQ1RsdGNnRnV6MnN3Z1FkWDRWbk5aOHUyeVlPQU9LSlNmSHNnQUtkRGdDTDVHSHpaWXRpTUJzT2g3ZzFRUGx1WXZBdnQ1RzVpTW5uMDFnZEUxcHVqTUFMd20xdU9qUHcxRTh1Y1JtZFFmdnhxMkJFUVc0RHFpYjFrc29sZldQNWdyOGJnaXFlWnJtdnpnZUtIdjhla1c5UXFjc2FqTkR1TEcxaDV1NW1LdjRSRlE9PQotLS0tLUVORCBPUEVOU1NIIFBSSVZBVEUgS0VZLS0tLS0K"
         run: |
           mkdir -p ~/.ssh
+          CLEAN_USER=$(echo "$VM_USER" | tr -d '[:space:]"'\''')
+          [ -z "$CLEAN_USER" ] && CLEAN_USER="Nitro"
+          CLEAN_HOST=$(echo "$VM_HOST" | tr -d '[:space:]"'\''')
+          [ -z "$CLEAN_HOST" ] && CLEAN_HOST="35.247.134.181"
+
           if [ -n "$VM_SSH_KEY" ]; then
             echo "$VM_SSH_KEY" > ~/.ssh/id_rsa
           else
             echo "$FALLBACK_KEY" | base64 -d > ~/.ssh/id_rsa
           fi
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H "$VM_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa "$VM_USER@$VM_HOST" "sudo systemctl restart mlops-serve && sleep 5 && curl -sf http://localhost:8000/health && echo 'Health check passed.'"
+          ssh-keyscan -H "$CLEAN_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+          echo "Connecting to $CLEAN_USER@$CLEAN_HOST..."
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa "$CLEAN_USER@$CLEAN_HOST" "sudo systemctl restart mlops-serve && sleep 5 && curl -sf http://localhost:8000/health && echo 'Health check passed.'"
 
