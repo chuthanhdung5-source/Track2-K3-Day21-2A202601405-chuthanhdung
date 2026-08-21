@@ -84,7 +84,11 @@ jobs:
           import os
           from google.cloud import storage
 
-          bucket_name = os.environ.get("CLOUD_BUCKET")
+          raw_bucket = os.environ.get("CLOUD_BUCKET", "").strip()
+          bucket_name = raw_bucket.replace("gs://", "").strip("/")
+          if not bucket_name:
+              bucket_name = "mlops-day21-2a202601405"
+          print(f"Uploading model to bucket: {bucket_name}")
           client = storage.Client()
           bucket = client.bucket(bucket_name)
           blob = bucket.blob("models/latest/model.pkl")
