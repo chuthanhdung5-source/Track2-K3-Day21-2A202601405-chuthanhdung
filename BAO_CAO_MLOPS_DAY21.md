@@ -1,7 +1,7 @@
 # BÁO CÁO THỰC HÀNH MLOPS - DAY 21
 ## Xây Dựng Pipeline CI/CD Tự Động Cho Hệ Thống AI
 
-- **Họ và tên**: Chu Thanh Dung
+- **Họ và tên**: Chu Thành Dũng
 - **Mã sinh viên / ID**: 2A202601405
 - **Khóa học**: AI In Action - VinUni (Track 2 - K3)
 - **Repository**: [https://github.com/chuthanhdung5-source/Track2-K3-Day21-2A202601405-chuthanhdung](https://github.com/chuthanhdung5-source/Track2-K3-Day21-2A202601405-chuthanhdung)
